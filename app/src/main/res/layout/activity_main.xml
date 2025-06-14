@@ -20,6 +20,21 @@
         android:textIsSelectable="false"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Write your help request below" />
+
+    <EditText
+        android:id="@+id/smstext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        android:text="@string/sms" />
+
     <Button
         android:id="@+id/Button1"
         android:layout_width="match_parent"
@@ -32,6 +47,8 @@
     <ListView
         android:id="@+id/ListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content">
+
+    </ListView>
 
 </LinearLayout>
