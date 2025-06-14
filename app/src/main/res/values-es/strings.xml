@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">RMDSSOE SOS</string>
-    <string name="new_text">To report danger, press the power button 4 times.</string>
+    <string name="new_text">To report danger, shake your phone 3 times or press the power button 4 times.</string>
     <string name="add_emergency_contact">Add Emergency Contact</string>
     <string name="sms">I am in DANGER, i need help.</string>
     <string name="max_contacts">Can\'t Add more than 5 Contacts</string>
