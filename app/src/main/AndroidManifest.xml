@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.rmdssoe.sos"
-
     tools:node="replace">
 
     <uses-feature
@@ -15,6 +14,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!--This permission is necessary for devices
     with Android O and above, so that
@@ -43,6 +43,17 @@
             android:name=".ShakeServices.SensorService"
             android:enabled="true"
             android:exported="true" />
+
+        <receiver
+            android:name=".ShakeServices.BootUpReceiver"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+            android:exported="true"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
 
         <activity android:name=".MainActivity"
             android:exported="true">

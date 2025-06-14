@@ -4,6 +4,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 public class ShakeDetector implements SensorEventListener {
 
@@ -37,7 +38,7 @@ public class ShakeDetector implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
+        Log.i("sensor", " " + event);
         if (mListener != null) {
             float x = event.values[0];
             float y = event.values[1];

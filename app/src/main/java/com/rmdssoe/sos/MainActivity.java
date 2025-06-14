@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,9 +14,12 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -51,8 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
         // check for runtime permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS}, 100);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.VIBRATE}, 100);
             }
         }
 
@@ -94,9 +99,28 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
                     startActivityForResult(intent, PICK_CONTACT);
                 } else {
-                    Toast.makeText(MainActivity.this, "Can't Add more than 5 Contacts", Toast.LENGTH_SHORT).show();
+                    String maxContacts = getResources().getString(R.string.max_contacts);
+                    Toast.makeText(MainActivity.this, maxContacts, Toast.LENGTH_SHORT).show();
                 }
             }
+        });
+
+
+        EditText smsText = (EditText) findViewById(R.id.smstext);
+
+        SharedPreferences settings = getSharedPreferences("RescueSettings", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        String defaultMessage = getResources().getString(R.string.sms);
+        smsText.setText(settings.getString("SMSText", defaultMessage));
+
+        smsText.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                //Log.e("tag",s.toString());
+                editor.putString("SMSText", s.toString());
+                editor.commit();
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
     }
 
