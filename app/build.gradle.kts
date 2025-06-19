@@ -6,6 +6,8 @@ android {
     namespace = "com.rmdssoe.sos"
     compileSdk = 33
 
+    var keystoreFile = rootProject.file("app/keystore.jks")
+
     defaultConfig {
         applicationId = "com.rmdssoe.sos"
         minSdk = 17
@@ -16,10 +18,35 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (keystoreFile.exists()) {
+            getByName("debug") {
+                keyAlias = "debug"
+                storeFile = keystoreFile
+                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyPassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            }
+            create("release") {
+                keyAlias = "release"
+                storeFile = keystoreFile
+                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyPassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            }
+        } else {
+            println("Keystore file not found, skipping signing")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (keystoreFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                println("Keystore file not found, skipping signing")
+            }
+            isDebuggable = false
         }
     }
     compileOptions {
