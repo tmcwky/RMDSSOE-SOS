@@ -34,9 +34,9 @@ jobs:
         ./gradlew assembleRelease
         ./gradlew bundleRelease
         pwd
-        ls
+        ls app/build/outputs/apk/release/
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-release.apk
-        path: app/**/app-release.apk
+        name: APKs
+        path: app/**/*.apk
