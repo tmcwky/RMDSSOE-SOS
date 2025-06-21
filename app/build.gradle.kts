@@ -7,6 +7,8 @@ android {
     compileSdk = 33
 
     var keystoreFile = rootProject.file("app/keystore.jks")
+    var passSpecified = !System.getenv("ANDROID_KEYSTORE_PASSWORD").isNullOrEmpty()
+    var canSign = keystoreFile.exists() && passSpecified
 
     defaultConfig {
         applicationId = "com.rmdssoe.sos"
@@ -19,7 +21,7 @@ android {
     }
 
     signingConfigs {
-        if (keystoreFile.exists()) {
+        if (canSign) {
             getByName("debug") {
                 keyAlias = "debug"
                 storeFile = keystoreFile
@@ -41,7 +43,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            if (keystoreFile.exists()) {
+            if (canSign) {
                 signingConfig = signingConfigs.getByName("release")
             } else {
                 println("Keystore file not found, skipping signing")
