@@ -38,9 +38,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: APKs
-          path: ./_site/
+          path: ./APKs/
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ github.token }}
+      - name: Move APK zip
+        run: cp APKs/* ./_site/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
