@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences settings = getSharedPreferences("RescueSettings", 0);
         SharedPreferences.Editor editor = settings.edit();
-        String defaultMessage = getResources().getString(R.string.sms);
+        String defaultMessage = getResources().getString(R.string.default_sms_text);
         smsText.setText(settings.getString("SMSText", defaultMessage));
 
         smsText.addTextChangedListener(new TextWatcher() {

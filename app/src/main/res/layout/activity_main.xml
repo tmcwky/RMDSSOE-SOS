@@ -14,7 +14,7 @@
         android:fontFamily="sans-serif-black"
         android:forceDarkAllowed="true"
         android:padding="?attr/listPreferredItemPaddingEnd"
-        android:text="@string/new_text"
+        android:text="@string/description_label"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textIsSelectable="false"
@@ -33,7 +33,7 @@
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"
-        android:text="@string/sms" />
+        android:text="@string/default_sms_text" />
 
     <Button
         android:id="@+id/Button1"

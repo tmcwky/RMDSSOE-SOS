@@ -14,9 +14,6 @@ import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.telephony.SmsManager;
-import android.util.Log;
-
-import androidx.annotation.RequiresApi;
 
 import com.rmdssoe.sos.Contacts.ContactModel;
 import com.rmdssoe.sos.Contacts.DbHelper;
@@ -37,10 +34,10 @@ public class ScreenReceiver extends BroadcastReceiver {
         //Log.e("tag", count+"");
 
         SharedPreferences settings = context.getSharedPreferences("RescueSettings", context.MODE_PRIVATE);
-        String defaultMessage = context.getResources().getString(R.string.sms);
+        String defaultMessage = context.getResources().getString(R.string.default_sms_text);
         String message = settings.getString("SMSText", defaultMessage);
 
-        Log.i("screen", "screen input");
+        // Log.i("screen", "screen input");
 
         if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
             count++;
@@ -54,7 +51,7 @@ public class ScreenReceiver extends BroadcastReceiver {
             if(count > 4){
                 count = 0;
                 notify_and_send(context, message);
-                Log.e("screen", "success");
+                // Log.e("screen", "success");
             }
 
         } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
@@ -69,7 +66,7 @@ public class ScreenReceiver extends BroadcastReceiver {
             if(count > 4){
                 count = 0;
                 notify_and_send(context, message);
-                Log.i("screen", "success");
+                // Log.i("screen", "success");
             }
 
         }
@@ -96,7 +93,7 @@ public class ScreenReceiver extends BroadcastReceiver {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         for (String provider: locationManager.getAllProviders()) {
             Location location = locationManager.getLastKnownLocation(provider);
-            Log.i("location", provider + " " + location);
+            //Log.i("location", provider + " " + location);
             if (location != null) {
                 if (location.getElapsedRealtimeNanos() > (SystemClock.elapsedRealtimeNanos() - 1e11)) {
                     sendSms(context, message, location);
@@ -137,7 +134,9 @@ public class ScreenReceiver extends BroadcastReceiver {
     public void sendSms(Context context, String message, Location location){
         // get the SMSManager
         SmsManager smsManager = SmsManager.getDefault();
-        Log.i("yeee", "sending message " + location);
+
+        // Log.i("yeee", "sending message " + location);
+
         // get the list of all the contacts in Database
         DbHelper db = new DbHelper(context);
         List<ContactModel> list = db.getAllContacts();
