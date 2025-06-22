@@ -27,15 +27,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            README.md
+          sparse-checkout-cone-mode: false
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: APKs
-          path: ./APKs/
+          path: ./APKs
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ github.token }}
       - name: Move APK zip
-        run: cp APKs/build/outputs/apk/release/app-release.apk .
+        run: |
+          APPBuildDate=$(date +%F)
+          mv ./APKs/build/outputs/apk/release/app-release.apk ./SOS-Nightly-${APPBuildDate}.apk
+          mv ./APKs/build/outputs/apk/debug/app-debug.apk ./SOS-Nightly-${APPBuildDate}-debug.apk
+          ln -s ./SOS-Nightly-${APPBuildDate}.apk ./SOS-Nightly.apk
+          ln -s ./SOS-Nightly-${APPBuildDate}-debug.apk ./SOS-Nightly-debug.apk
+          sed -i "s/SOS-Nightly/SOS-Nightly-${APPBuildDate}/g" README.md
+          rm -r APKs
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Build with Jekyll

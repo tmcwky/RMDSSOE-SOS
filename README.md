@@ -1,25 +1,19 @@
 # RMDSSOE-SOS
-A SOS app I created for my University to promote Women Safety.
 
-It's a Java based Android App developed in Android Studio.
-
-<img src="https://github.com/MadhurJ20/RMDSSOE-SOS/assets/84721727/c785a001-4e4b-4335-9cd4-92ec8f1ccf51" alt="RMDSSOE SOS Logo" width="250"/>
+This is a fork of RMDSSOE-SOS by MadhurJ20, but the behaviour of the app has been drastically modified.
 
 # Setup
-1. If you haven't already, download & install [Android Studio](https://developer.android.com/studio).
-2. Download or Clone the repository.
-3. Open project in Android Studio.
-4. Connect your device to your PC via USB/Wireless Debugging.
-5. Click Run App to install it on your device.
+
+The APK produced by Github can be downloaded from the links below:
+
+* [SOS-Nightly.apk](https://tmcwky.github.io/RMDSSOE-SOS/SOS-Nightly.apk)
+* [SOS-Nightly-debug.apk](https://tmcwky.github.io/RMDSSOE-SOS/SOS-Nightly-debug.apk)
+
 
 # How To Use
-1. Open the app, give it all the permissions (Contacts, Location, Messages & Background Restrictions), the app might crash, just restart.
-2. Click Add Emergency Contact & select your emergency contacts who you wish to alert. ![Screenshot_App](https://github.com/MadhurJ20/RMDSSOE-SOS/assets/84721727/16ffe579-e628-42d4-af17-fa8a96d876ba)
-3. Make sure your device location is enabled.
-4. Shake your phone vigorously 3 times. The device vibrates to confirm that the message is sent.
-5. The SMS is sent from your phone. If location is enabled, a Google Maps link is attached, else it sends a simple alert message.
-![Screenshot_SMS](https://github.com/MadhurJ20/RMDSSOE-SOS/assets/84721727/363f867e-233d-4d22-8b92-cc168327ef02)
-
-
-Hope this app is useful for anyone in need. Please check it out on Google Play Store:
-(Coming Soon!)
+1. Open the app, give it all the permissions (Contacts, Location, Messages & Background Restrictions).
+2. Enter a message to be sent to your emergency contacts.
+3. Click Add Emergency Contact & select your emergency contacts who you wish to alert.
+4. If you want to send your location with the message, make sure your device location is enabled.
+5. To report emergency **Press the power button 4 times**. The device vibrates to confirm that the message is sent.
+6. The SMS is sent from your phone. If location is enabled, a Google Maps link is attached, else it sends a simple alert message.
