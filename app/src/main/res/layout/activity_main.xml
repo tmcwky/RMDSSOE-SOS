@@ -35,14 +35,32 @@
         android:inputType="textMultiLine"
         android:text="@string/default_sms_text" />
 
-    <Button
-        android:id="@+id/Button1"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        android:background="#0F9D58"
-        android:text="@string/add_emergency_contact"
-        android:textColor="@color/white" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/Button1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="3"
+            android:background="#0F9D58"
+            android:text="@string/add_emergency_contact"
+            android:textColor="@color/white" />
+
+        <ImageButton
+            android:id="@+id/settingsButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_settings"
+            android:backgroundTint="@color/purple_500"
+            />
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/ListView"

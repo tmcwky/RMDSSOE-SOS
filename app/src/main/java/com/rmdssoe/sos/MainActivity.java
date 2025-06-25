@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -57,25 +58,24 @@ public class MainActivity extends AppCompatActivity {
 
         // check for runtime permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // can live without position
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
-            }
             // can't live without SMS, contacts and vibration
             if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_DENIED) ||
                     (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_DENIED) ||
                     (ActivityCompat.checkSelfPermission(this, Manifest.permission.VIBRATE) == PackageManager.PERMISSION_DENIED))
             {
-                requestPermissions(new String[]{Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.VIBRATE}, 101);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.VIBRATE,
+                        Manifest.permission.POST_NOTIFICATIONS}, 101);
             }
         }
 
         // this is a special permission required only by devices using
         // Android Q and above. The Access Background Permission is responsible
         // for populating the dialog with "ALLOW ALL THE TIME" option
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 100);
-        }
+        // now done below
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        //    requestPermissions(new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 100);
+        //}
 
         // check for BatteryOptimization,
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
@@ -87,6 +87,18 @@ public class MainActivity extends AppCompatActivity {
 
         // Check autostart permissions, skip this for the time being
         // addAutoStartup();
+        ImageButton settingsButton = findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+                                              @Override
+                                              public void onClick(View v) {
+                                                  Intent iSettings = new Intent();
+                                                  iSettings.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                                  Uri uri = Uri.fromParts("package", getApplicationContext().getPackageName(), null);
+                                                  iSettings.setData(uri);
+
+                                                  startActivity(iSettings);
+                                              }
+                                          });
 
         // start the service
         SensorService sensorService = new SensorService();
@@ -161,9 +173,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 1) { return; }
+
         if (requestCode == 101) {
             if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_DENIED)) {
                 Toast.makeText(this, "Permissions Denied!\n Can't use the App!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (super.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            ) {
+                if (super.checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    super.requestPermissions(
+                            new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
+                            1
+                    );
+                }
             }
         }
     }
@@ -208,11 +236,9 @@ public class MainActivity extends AppCompatActivity {
     private void askIgnoreOptimization() {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            @SuppressLint("BatteryLife") Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-            intent.setData(Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, IGNORE_BATTERY_OPTIMIZATION_REQUEST);
+            startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                    Uri.parse("package:"+getPackageName())));
         }
-
     }
 
     private void addAutoStartup() {
