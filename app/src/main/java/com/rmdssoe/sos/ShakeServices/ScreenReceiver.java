@@ -1,6 +1,7 @@
 package com.rmdssoe.sos.ShakeServices;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.telephony.SmsManager;
+import android.util.Log;
 
 import com.rmdssoe.sos.Contacts.ContactModel;
 import com.rmdssoe.sos.Contacts.DbHelper;
@@ -43,7 +45,7 @@ public class ScreenReceiver extends BroadcastReceiver {
             count++;
             wasScreenOn = false;
             timeDiff = System.currentTimeMillis() - time;
-            //Log.e("tag",timeDiff + "");
+            Log.e("tag",timeDiff + "");
             time = System.currentTimeMillis();
             if(timeDiff >= 1200)
                 count = 0;
@@ -51,14 +53,14 @@ public class ScreenReceiver extends BroadcastReceiver {
             if(count > 4){
                 count = 0;
                 notify_and_send(context, message);
-                // Log.e("screen", "success");
+                Log.e("screen", "success");
             }
 
         } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
             count++;
             wasScreenOn = true;
             timeDiff = System.currentTimeMillis() - time;
-            //Log.e("tag",timeDiff + "");
+            Log.e("tag",timeDiff + "");
             time = System.currentTimeMillis();
             if(timeDiff >= 1200)
                 count = 0;
@@ -66,10 +68,26 @@ public class ScreenReceiver extends BroadcastReceiver {
             if(count > 4){
                 count = 0;
                 notify_and_send(context, message);
-                // Log.i("screen", "success");
+                Log.e("screen", "success");
             }
 
         }
+    }
+
+    public long age_ms(Location last) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+            return age_ms_api_17(last);
+        return age_ms_api_pre_17(last);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private long age_ms_api_17(Location last) {
+        return (SystemClock.elapsedRealtimeNanos() - last
+                .getElapsedRealtimeNanos()) / 1000000;
+    }
+
+    private long age_ms_api_pre_17(Location last) {
+        return System.currentTimeMillis() - last.getTime();
     }
 
     @SuppressLint("MissingPermission")
@@ -89,19 +107,20 @@ public class ScreenReceiver extends BroadcastReceiver {
         }
 
 
+        Boolean sent = false;
         // get last known location and check it's not too old
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         for (String provider: locationManager.getAllProviders()) {
             Location location = locationManager.getLastKnownLocation(provider);
             //Log.i("location", provider + " " + location);
             if (location != null) {
-                if (location.getElapsedRealtimeNanos() > (SystemClock.elapsedRealtimeNanos() - 1e11)) {
+                if (age_ms(location) < 2*60*1000) {
                     sendSms(context, message, location);
-                    return;
+                    sent = true;
                 }
             }
         }
-        sendSms(context, message, null);
+        if (!sent) sendSms(context, message, null);
 
         LocationListener locationListener=new LocationListener() {
             @Override
@@ -135,7 +154,7 @@ public class ScreenReceiver extends BroadcastReceiver {
         // get the SMSManager
         SmsManager smsManager = SmsManager.getDefault();
 
-        // Log.i("yeee", "sending message " + location);
+        Log.i("yeee", "sending message " + location);
 
         // get the list of all the contacts in Database
         DbHelper db = new DbHelper(context);
