@@ -69,14 +69,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // this is a special permission required only by devices using
-        // Android Q and above. The Access Background Permission is responsible
-        // for populating the dialog with "ALLOW ALL THE TIME" option
-        // now done below
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        //    requestPermissions(new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 100);
-        //}
-
         // check for BatteryOptimization,
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

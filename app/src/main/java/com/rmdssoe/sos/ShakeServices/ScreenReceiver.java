@@ -1,7 +1,6 @@
 package com.rmdssoe.sos.ShakeServices;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +13,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.telephony.SmsManager;
 import android.util.Log;
 
@@ -23,13 +23,14 @@ import com.rmdssoe.sos.R;
 
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ScreenReceiver extends BroadcastReceiver {
     public static boolean wasScreenOn = true;
     int count = 0;
     long time = 0, timeDiff = 0;
 
-    public ScreenReceiver(){};
+    public ScreenReceiver(){}
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -74,40 +75,35 @@ public class ScreenReceiver extends BroadcastReceiver {
         }
     }
 
-    public long age_ms(Location last) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-            return age_ms_api_17(last);
-        return age_ms_api_pre_17(last);
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private long age_ms_api_17(Location last) {
+    private long age_ms(Location last) {
         return (SystemClock.elapsedRealtimeNanos() - last
                 .getElapsedRealtimeNanos()) / 1000000;
-    }
-
-    private long age_ms_api_pre_17(Location last) {
-        return System.currentTimeMillis() - last.getTime();
     }
 
     @SuppressLint("MissingPermission")
     public void notify_and_send(final Context context, String message){
         // vibrate the phone
-        final Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        Vibrator vibrator = null;
         VibrationEffect vibEff;
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            VibratorManager vibratorManager = (VibratorManager) context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            vibrator = vibratorManager.getDefaultVibrator();
+        } else {
+            vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        }
+
         // Android Q and above have some predefined vibrating patterns
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // vibEff = VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK);
             vibEff = VibrationEffect.createOneShot(1500, VibrationEffect.DEFAULT_AMPLITUDE);
-            vibrator.cancel();
             vibrator.vibrate(vibEff);
         } else {
             vibrator.vibrate(1500);
         }
 
 
-        Boolean sent = false;
+        Location bestKnownLocation = null;
         // get last known location and check it's not too old
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         for (String provider: locationManager.getAllProviders()) {
@@ -115,26 +111,43 @@ public class ScreenReceiver extends BroadcastReceiver {
             //Log.i("location", provider + " " + location);
             if (location != null) {
                 if (age_ms(location) < 2*60*1000) {
-                    sendSms(context, message, location);
-                    sent = true;
+                    if (bestKnownLocation != null) {
+                        // we do already have a location
+                        if (location.hasAccuracy() && bestKnownLocation.hasAccuracy()) {
+                            // we can compare locations
+                            bestKnownLocation = ((location.getAccuracy() < bestKnownLocation.getAccuracy()) ? location : bestKnownLocation);
+                        } else if (location.hasAccuracy()) {
+                            // the old location does not have accuracy but the new one has
+                            bestKnownLocation = location;
+                        } // else there is no way to chose one
+                    } else {
+                        bestKnownLocation = location;
+                    }
                 }
             }
         }
-        if (!sent) sendSms(context, message, null);
+        Log.i("yeee", "sending first message");
+        sendSms(context, message, bestKnownLocation);
+
+        final AtomicInteger bestAccuracy = new AtomicInteger(10000000);
 
         LocationListener locationListener=new LocationListener() {
             @Override
             public void onLocationChanged(android.location.Location location) {
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
+                Log.i("yeee", "current location " + location );
                 if (location.hasAccuracy()) {
-                    if (location.getAccuracy() < 10) {
-                        locationManager.removeUpdates(this);
+                    int currentAccuracy = (int) location.getAccuracy();
+                    if (currentAccuracy < bestAccuracy.get()/2) {
+                        Log.i("yeee", "sending second location " + currentAccuracy );
+                        sendSms(context, message, location);
+                        bestAccuracy.set(currentAccuracy);
                     }
+                    if (currentAccuracy < 10) locationManager.removeUpdates(this);
                 } else {
                     locationManager.removeUpdates(this);
                 }
-                sendSms(context, message, location);
             }
 
             @Override
@@ -146,7 +159,7 @@ public class ScreenReceiver extends BroadcastReceiver {
         };
         for (String provider: locationManager.getAllProviders()) {
             locationManager.requestLocationUpdates(provider,
-                    2000, 0, locationListener);
+                    5000, 0, locationListener);
         }
     }
 
