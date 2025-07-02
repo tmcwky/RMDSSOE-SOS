@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,6 +30,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.rmdssoe.sos.Contacts.ContactModel;
 import com.rmdssoe.sos.Contacts.DbHelper;
+import com.rmdssoe.sos.MainActivity;
 import com.rmdssoe.sos.R;
 
 import java.util.List;
@@ -164,6 +166,8 @@ public class SensorService extends Service {
     private void startMyOwnForeground() {
         String NOTIFICATION_CHANNEL_ID = "example.permanence";
         String channelName = "Background Service";
+        String appName = getResources().getString(R.string.app_name);
+
         NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_MIN);
 
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -171,17 +175,20 @@ public class SensorService extends Service {
         manager.createNotificationChannel(chan);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent intent = PendingIntent.getActivity(this, 0,
+                notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
         Notification notification = notificationBuilder.setOngoing(true)
-                .setContentTitle("You are protected.")
-                .setContentText("We are there for you")
-
-                // this is important, otherwise the notification will show the way
-                // you want i.e. it will show some default notification
+                .setContentTitle(appName + " is running")
+                .setContentText("Check this notification from time to time")
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
+                .setContentIntent(intent)
                 .build();
+
         startForeground(2, notification);
     }
 

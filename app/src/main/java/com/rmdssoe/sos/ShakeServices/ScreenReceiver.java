@@ -83,7 +83,7 @@ public class ScreenReceiver extends BroadcastReceiver {
     @SuppressLint("MissingPermission")
     public void notify_and_send(final Context context, String message){
         // vibrate the phone
-        Vibrator vibrator = null;
+        Vibrator vibrator;
         VibrationEffect vibEff;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -123,13 +123,16 @@ public class ScreenReceiver extends BroadcastReceiver {
                     } else {
                         bestKnownLocation = location;
                     }
+                } else {
+                    Log.i("yeee", "known location is too old " + age_ms(location) + " ms");
                 }
             }
         }
         Log.i("yeee", "sending first message");
         sendSms(context, message, bestKnownLocation);
 
-        final AtomicInteger bestAccuracy = new AtomicInteger(10000000);
+        final AtomicInteger sentAccuracy = new AtomicInteger(10000000);
+        final AtomicInteger maxCalls = new AtomicInteger(0);
 
         LocationListener locationListener=new LocationListener() {
             @Override
@@ -139,15 +142,19 @@ public class ScreenReceiver extends BroadcastReceiver {
                 Log.i("yeee", "current location " + location );
                 if (location.hasAccuracy()) {
                     int currentAccuracy = (int) location.getAccuracy();
-                    if (currentAccuracy < bestAccuracy.get()/2) {
+                    if (currentAccuracy < sentAccuracy.get()/2) {
                         Log.i("yeee", "sending second location " + currentAccuracy );
                         sendSms(context, message, location);
-                        bestAccuracy.set(currentAccuracy);
+                        sentAccuracy.set(currentAccuracy);
                     }
-                    if (currentAccuracy < 10) locationManager.removeUpdates(this);
-                } else {
-                    locationManager.removeUpdates(this);
+                    // what if we never get to better than 10 meters accuracy?
+                    if (currentAccuracy < 10) {
+                        locationManager.removeUpdates(this);
+                        return;
+                    }
                 }
+                Log.i("yeee", "iteration " + maxCalls.get() );
+                if (maxCalls.incrementAndGet() > 20) locationManager.removeUpdates(this);
             }
 
             @Override
@@ -157,9 +164,10 @@ public class ScreenReceiver extends BroadcastReceiver {
             @Override
             public void onProviderDisabled(String provider) {}
         };
+
         for (String provider: locationManager.getAllProviders()) {
             locationManager.requestLocationUpdates(provider,
-                    5000, 0, locationListener);
+                    20000, 0, locationListener);
         }
     }
 
