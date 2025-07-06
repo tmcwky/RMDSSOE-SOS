@@ -183,7 +183,7 @@ public class SensorService extends Service {
         Notification notification = notificationBuilder.setOngoing(true)
                 .setContentTitle(appName + " is running")
                 .setContentText("Check this notification from time to time")
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_flags)
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .setContentIntent(intent)
