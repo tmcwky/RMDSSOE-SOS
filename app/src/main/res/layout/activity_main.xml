@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -33,11 +34,14 @@
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"
+        android:minHeight="48dp"
+        android:padding="10dp"
         android:text="@string/default_sms_text" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <Button
@@ -45,21 +49,24 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_weight="3"
-            android:background="#0F9D58"
+            android:layout_weight="6"
+            android:background="@color/primary"
             android:text="@string/add_emergency_contact"
-            android:textColor="@color/white" />
+            android:textColor="@color/onPrimary" />
 
-        <ImageButton
+        <Button
             android:id="@+id/settingsButton"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_settings"
-            android:backgroundTint="@color/purple_500"
-            />
-
+            android:background="@color/primary"
+            android:text=""
+            android:textColor="@color/onPrimary"
+            android:contentDescription="Open App Settings"
+            app:icon="@drawable/ic_settings"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
     </LinearLayout>
 
     <ListView

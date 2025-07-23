@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Check autostart permissions, skip this for the time being
         // addAutoStartup();
-        ImageButton settingsButton = findViewById(R.id.settingsButton);
+        Button settingsButton = findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(new View.OnClickListener() {
                                               @Override
                                               public void onClick(View v) {
