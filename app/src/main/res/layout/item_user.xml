@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Name"
-                android:textColor="@color/design_default_color_secondary" />
+                android:textColor="@color/secondary" />
 
             <TextView
                 android:id="@+id/tvPhone"
@@ -31,11 +31,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Phone"
-                android:textColor="@color/design_default_color_secondary_variant"
+                android:textColor="@color/secondary"
                 android:textStyle="bold" />
-
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
 </LinearLayout>
+
+    <!-- android:textColor="@color/design_default_color_secondary" -->
+    <!--  android:textColor="@color/design_default_color_secondary_variant" -->

@@ -4,14 +4,14 @@
     <color name="onPrimary">#FFFFFF</color>
     <color name="primaryContainer">#E6D3A0</color>
     <color name="onPrimaryContainer">#332602</color>
-    <color name="secondary">#9990AD</color>
+    <color name="secondary">#8F7443</color>
     <color name="onSecondary">#FFFFFF</color>
-    <color name="secondaryContainer">#D3CBE6</color>
-    <color name="onSecondaryContainer">#262133</color>
-    <color name="tertiary">#B47A8D</color>
+    <color name="secondaryContainer">#E6D8BF</color>
+    <color name="onSecondaryContainer">#332918</color>
+    <color name="tertiary">#7C334B</color>
     <color name="onTertiary">#FFFFFF</color>
-    <color name="tertiaryContainer">#E6A4BA</color>
-    <color name="onTertiaryContainer">#330514</color>
+    <color name="tertiaryContainer">#E6BBC8</color>
+    <color name="onTertiaryContainer">#33151F</color>
     <color name="error">#B3261E</color>
     <color name="onError">#FFFFFF</color>
     <color name="errorContainer">#E6ACA9</color>
@@ -24,15 +24,3 @@
     <color name="onSurfaceVariant">#666152</color>
     <color name="outline">#99917c</color>
 </resources>
-
-<!--
-<resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-</resources>
--->
